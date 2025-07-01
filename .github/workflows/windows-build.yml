@@ -1,0 +1,28 @@
+# filepath: .github/workflows/windows-build.yml
+name: Build Tabby for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-msvc
+          override: true
+      - name: Build Tabby (CPU)
+        run: cargo build --release --target x86_64-pc-windows-msvc
+      - name: Upload Tabby Windows Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: tabby_x86_64-windows-msvc.exe
+          path: target/x86_64-pc-windows-msvc/release/tabby.exe
